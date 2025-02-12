@@ -2,14 +2,14 @@ const TeamAvailibility = () => {
     const schedules = [
       {
         id: 1,
-        name: "cdwc",
-        schedule: "Tue 2:45am - 8:45am Wed 12:30am - 2:00am",
+        name: "Devanshu",
+        schedule: "Mon 4:15am - 9:25am Tue 1:30pm - 5:00pm",
         timezone: "Asia/Kolkata"
       },
       {
         id: 2,
-        name: "cwcwc",
-        schedule: "Mon 9:00am - 5:00pm Tue 9:00am - 5:00pm Wed 9:00am - 5:00pm Thu 9:00am - 5:00pm Fri 9:00am - 5:00pm",
+        name: "Piyush",
+        schedule: "Sat 10:00pm - 2:00am Sun 10:00am - 2:00pm ",
         timezone: "Asia/Kolkata"
       }
     ];

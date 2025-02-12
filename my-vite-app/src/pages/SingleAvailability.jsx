@@ -15,30 +15,17 @@ const timezoneOptions = [
   "America/Denver -7:00 GMT",
   "America/Chicago -6:00 GMT",
   "America/New_York -5:00 GMT",
-  "America/Halifax -4:00 GMT",
-  "America/Sao_Paulo -3:00 GMT",
-  "Atlantic/South_Georgia -2:00 GMT",
-  "Atlantic/Azores -1:00 GMT",
   "Europe/London +0:00 GMT",
-  "Europe/Paris +1:00 GMT",
-  "Europe/Athens +2:00 GMT",
-  "Europe/Moscow +3:00 GMT",
   "Asia/Dubai +4:00 GMT",
   "Asia/Kolkata +5:30 GMT",
-  "Asia/Bangkok +7:00 GMT",
-  "Asia/Hong_Kong +8:00 GMT",
   "Asia/Tokyo +9:00 GMT",
-  "Australia/Sydney +10:00 GMT",
-  "Pacific/Noumea +11:00 GMT",
-  "Pacific/Fiji +12:00 GMT",
-  "Pacific/Tongatapu +13:00 GMT",
 ];
 
 const SingleAvailability = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [availability, setAvailability] = useState(null);
   const [dataList, setDataList] = useState([]);
-  const navigate = useNavigate();
   const [selectedTimezone, setSelectedTimezone] = useState("");
 
   useEffect(() => {
@@ -49,54 +36,6 @@ const SingleAvailability = () => {
     }
   }, [id]);
 
-  const syncMessage = () => {
-    const savedData = JSON.parse(localStorage.getItem("dataList"));
-    console.log(availability);
-
-    const newDataItem = savedData.find((a) => a.id === id);
-    console.log(newDataItem);
-
-    const { monday, tuesday, wednesday, thursday, friday, saturday, sunday } =
-      newDataItem;
-    if (newDataItem) {
-      const monMessage =
-        monday.length > 0 ? `Mon ${monday[0].start} - ${monday[0].end} ` : "";
-      const tueMessage =
-        tuesday.length > 0
-          ? `Tue ${tuesday[0].start} - ${tuesday[0].end} `
-          : "";
-      const wedMessage =
-        wednesday.length > 0
-          ? `Wed ${wednesday[0].start} - ${wednesday[0].end} `
-          : "";
-      const thuMessage =
-        thursday.length > 0
-          ? `Thu ${thursday[0].start} - ${thursday[0].end} `
-          : "";
-      const friMessage =
-        friday.length > 0 ? `Fri ${friday[0].start} - ${friday[0].end} ` : "";
-      const satMessage =
-        saturday.length > 0
-          ? `Sat ${saturday[0].start} - ${saturday[0].end} `
-          : "";
-      const sunMessage =
-        sunday.length > 0 ? `Sun ${sunday[0].start} - ${sunday[0].end} ` : "";
-
-      const message =
-        monMessage +
-        tueMessage +
-        wedMessage +
-        thuMessage +
-        friMessage +
-        satMessage +
-        sunMessage;
-      newDataItem.message = message;
-      let updatedDataList = savedData.filter((item) => item.id !== id);
-      updatedDataList = [...updatedDataList, newDataItem];
-      localStorage.setItem("dataList", JSON.stringify(updatedDataList));
-    }
-  };
-
   const handleTimezoneChange = (event) => {
     const newTimezone = event.target.value;
     const updatedDataList = dataList.map((item) =>
@@ -105,190 +44,104 @@ const SingleAvailability = () => {
     setDataList(updatedDataList);
     localStorage.setItem("dataList", JSON.stringify(updatedDataList));
     setSelectedTimezone(newTimezone);
-    toast.success("Schedule updated successfully", {
-      position: "bottom-center",
-      style: {
-        borderRadius: "10px",
-      },
-    });
+    toast.success("Schedule updated successfully");
   };
 
-  const toggleDefault = (id) => {
+  const toggleDefault = () => {
     const updatedDataList = dataList.map((item) =>
-      item.id === id
+      item.id === availability?.id
         ? { ...item, isDefault: !item.isDefault }
         : { ...item, isDefault: false }
     );
     setDataList(updatedDataList);
     localStorage.setItem("dataList", JSON.stringify(updatedDataList));
-    toast.success("Default status updated!", {
-      position: "bottom-center",
-      style: {
-        borderRadius: "10px",
-      },
-    }
-  );
+    toast.success("Default status updated!");
   };
 
-  const deleteAvailability = (id) => {
-    const updatedDataList = dataList.filter((item) => item.id !== id);
+  const deleteAvailability = () => {
+    const updatedDataList = dataList.filter((item) => item.id !== availability?.id);
     setDataList(updatedDataList);
     localStorage.setItem("dataList", JSON.stringify(updatedDataList));
-    toast.success("Availability deleted successfully", {
-      position: "bottom-center",
-      style: {
-        borderRadius: "10px",
-      },
-    });
+    toast.success("Availability deleted successfully");
     navigate("/");
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="p-8">
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <button
-              className="btn btn-ghost btn-circle text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
-              onClick={() => navigate("/")}
-            >
-              <FaArrowLeft className="text-xl" />
-            </button>
-            <div>
-              <h1 className="text-3xl font-semibold text-gray-900 dark:text-white">
-                {availability?.name}
-              </h1>
-              <p className="text-gray-600 dark:text-gray-300 text-lg max-w-4xl">
-                {availability?.message}
-              </p>
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 dark:from-gray-900 dark:to-gray-800 p-6">
+      <div className="max-w-5xl mx-auto bg-white dark:bg-gray-900 shadow-lg rounded-xl p-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <button
+            className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition"
+            onClick={() => navigate("/")}
+          >
+            <FaArrowLeft className="text-2xl" />
+          </button>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            {availability?.name}
+          </h1>
+        </div>
+
+        {/* Availability Message */}
+        <p className="mt-2 text-gray-600 dark:text-gray-400">{availability?.message}</p>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+          {/* Left Section */}
+          <div className="col-span-2 space-y-6">
+            {/* Daily Availability */}
+            <div className="bg-gray-50 dark:bg-gray-800 p-5 rounded-lg shadow">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Daily Availability</h2>
+              <DayAvailibility />
+            </div>
+
+            {/* Overrides */}
+            <div className="bg-gray-50 dark:bg-gray-800 p-5 rounded-lg shadow">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Overrides</h2>
+              <Overrides availability={availability} />
             </div>
           </div>
 
-          <div className="flex items-center gap-5">
-            <div className="flex items-center gap-3">
-              <span className="text-gray-700 dark:text-gray-200 text-lg font-medium">
-                Set to Default
-              </span>
+          {/* Right Section - Settings */}
+          <div className="bg-gray-50 dark:bg-gray-800 p-5 rounded-lg shadow">
+            {/* Default Toggle */}
+            <div className="flex items-center justify-between">
+              <span className="text-gray-700 dark:text-gray-300">Set as Default</span>
               <input
                 type="checkbox"
                 className="toggle"
                 defaultChecked={availability?.isDefault}
-                onChange={() => toggleDefault(availability?.id)}
+                onChange={toggleDefault}
               />
             </div>
 
-            <div className="divider divider-horizontal"></div>
+            <hr className="my-4 border-gray-300 dark:border-gray-700" />
 
-            <button
-              onClick={() => document.getElementById("my_modal_4").showModal()}
-              className="btn btn-ghost btn-square text-error hover:bg-gray-100 dark:hover:bg-gray-800"
+            {/* Timezone Selector */}
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Timezone</h2>
+            <select
+              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              value={selectedTimezone}
+              onChange={handleTimezoneChange}
             >
-              <MdDeleteOutline className="text-2xl" />
-            </button>
+              <option value={availability?.timezone}>{availability?.timezone}</option>
+              {timezoneOptions.map((timezone, index) => (
+                <option key={index} value={timezone}>
+                  {timezone}
+                </option>
+              ))}
+            </select>
 
-            <div className="divider divider-horizontal"></div>
+            <hr className="my-4 border-gray-300 dark:border-gray-700" />
 
+            {/* Delete Button */}
             <button
-              onClick={() => {
-                syncMessage();
-                toast.success("Schedule updated successfully", {
-                  position: "bottom-center",
-                  style: { borderRadius: "10px" },
-                });
-              }}
-              className="btn btn-primary"
+              onClick={() => deleteAvailability(availability?.id)}
+              className="w-full text-white bg-red-600 hover:bg-red-700 transition p-2 rounded-lg flex items-center justify-center gap-2"
             >
-              Save
+              <MdDeleteOutline className="text-xl" /> Delete Schedule
             </button>
           </div>
         </div>
-
-        <div className="grid grid-cols-5 gap-8">
-          <div className="col-span-3 space-y-8">
-            <div className="card bg-white dark:bg-gray-800 shadow-xl">
-              <div className="card-body">
-                <DayAvailibility />
-              </div>
-            </div>
-            <div className="card bg-white dark:bg-gray-800 shadow-xl">
-              <div className="card-body">
-                <Overrides availability={availability} />
-              </div>
-            </div>
-          </div>
-
-          <div className="col-span-2">
-            <div className="card bg-white dark:bg-gray-800 shadow-xl">
-              <div className="card-body">
-                <h2 className="card-title text-gray-900 dark:text-white">
-                  Timezone
-                </h2>
-                <select
-                  className="select select-bordered w-full bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border-gray-200 dark:border-gray-600"
-                  value={selectedTimezone}
-                  onChange={handleTimezoneChange}
-                >
-                  <option value={availability?.timezone}>
-                    {availability?.timezone}
-                  </option>
-                  {timezoneOptions.map((timezone, index) => (
-                    <option key={index} value={timezone}>
-                      {timezone}
-                    </option>
-                  ))}
-                </select>
-
-                <div className="divider"></div>
-
-                <h2 className="card-title text-gray-900 dark:text-white">
-                  Something doesn't look right?
-                </h2>
-                <button className="btn btn-outline border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 w-full">
-                  Launch Troubleshooter
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Delete Modal */}
-        <dialog id="my_modal_4" className="modal modal-bottom sm:modal-middle">
-          <div className="modal-box bg-white dark:bg-gray-800">
-            <div className="flex gap-6 items-start">
-              <div className="flex-shrink-0">
-                <div className="p-3 bg-error/10 text-error rounded-full">
-                  <MdOutlineInfo className="text-3xl" />
-                </div>
-              </div>
-              <div>
-                <h3 className="font-bold text-lg text-gray-900 dark:text-white">
-                  Delete schedule
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Deleting a schedule will remove it from all event types. This
-                  action cannot be undone.
-                </p>
-              </div>
-            </div>
-
-            <div className="modal-action">
-              <form method="dialog" className="flex gap-4">
-                <button className="btn btn-ghost text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
-                  Cancel
-                </button>
-                <button
-                  onClick={() => deleteAvailability(availability?.id)}
-                  className="btn btn-error"
-                >
-                  Delete
-                </button>
-              </form>
-            </div>
-          </div>
-          <form method="dialog" className="modal-backdrop">
-            <button>close</button>
-          </form>
-        </dialog>
       </div>
     </div>
   );

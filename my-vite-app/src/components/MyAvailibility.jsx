@@ -1,15 +1,12 @@
 import ListComponent from "./ListComponent";
 
-const MyAvailibility = ({
-  data,
-  deleteItem,
-  toggleDefault,
-  duplicateAvailability,
-}) => {
-
+const MyAvailability = ({ data, deleteItem, toggleDefault, duplicateAvailability }) => {
   return (
     <div className="mt-10">
-      <div className="border border-gray-200 dark:border-gray-700 rounded-lg">
+      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">My Availability</h2>
+
+      {/* Grid Layout */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {data.map((a) => (
           <ListComponent
             deleteItem={deleteItem}
@@ -20,9 +17,8 @@ const MyAvailibility = ({
           />
         ))}
       </div>
-   
     </div>
   );
 };
 
-export default MyAvailibility;
+export default MyAvailability;
